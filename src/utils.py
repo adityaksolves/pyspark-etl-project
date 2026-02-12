@@ -27,14 +27,13 @@ def get_logger():
 
     return logger
 
-
 def get_spark_session(config):
-    builder = SparkSession.builder.appName(config['project']['name'])
-    for key, value in config.get('spark_params',{}).items():
-        builder = builder.config(key, value)
-
-    builder = builder.config("spark.jars", os.getenv('JAR_PATH'))
-    return builder.getOrCreate()
+    return SparkSession.builder \
+        .appName(config['project']['name']) \
+        .config("spark.executor.memory", config['spark_params']['spark.executor.memory']) \
+        .config("spark.sql.shuffle.partitions", config['spark_params']['spark.sql.shuffle.partitions']) \
+        .config("spark.jars", os.getenv('JAR_PATH')) \
+        .getOrCreate()
 
 def log_metadata(spark, config, status_code, status_text, error_message=None):
     jdbc_url = config['database']['url']

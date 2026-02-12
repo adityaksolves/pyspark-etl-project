@@ -13,7 +13,7 @@ database:
   driver: "org.postgresql.Driver"
 
 tables:
-  source_sales: "public.sales_transaction"
+  source_sales: "public.sales_transactions"
   source_products: "public.product_master"
   target_report: "public.category_sales_report"
   metadata_table: "public.pipeline_run_metadata"

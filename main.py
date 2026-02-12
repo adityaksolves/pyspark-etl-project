@@ -6,7 +6,7 @@ from src.etl.transform import transform_data
 from src.etl.load import load_data
 
 def run_pipeline():
-
+    #env is selected to dev by default and hence our original data is safe
     env = os.getenv("ENV","dev")
     config = load_config(env)
 
@@ -14,7 +14,8 @@ def run_pipeline():
     spark = get_spark_session(config)
 
     try:
-        logger.info("Starting Pipeline ...")
+        logger.info(f"Starting Pipeline in {env} mode...")
+
         #Extract
         sales_df , product_df = extract_data(spark, config)
         logger.info("Data Extracted")
@@ -42,3 +43,5 @@ def run_pipeline():
 
 if __name__ == "__main__":
     run_pipeline()
+
+

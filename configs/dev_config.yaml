@@ -1,0 +1,23 @@
+#Development Settings
+project:
+  name: "ETL_Pipeline_Dev"
+  log_level: "DEBUG"
+
+spark_params:
+  spark.executor.memory: "1g"
+  spark.driver.memory: "1g"
+  spark.sql.shuffle.partitions: "2"
+
+database:
+  url: "jdbc:postgresql://localhost:5432/dev_db"
+  driver: "org.postgresql.Driver"
+
+tables:
+  source_sales: "public.sales_transaction"
+  source_products: "public.product_master"
+  target_report: "public.category_sales_report"
+  metadata_table: "public.pipeline_run_metadata"
+
+transform:
+  aggregation_column: "category"
+  calculation: "quantity * price"

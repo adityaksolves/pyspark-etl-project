@@ -1,6 +1,6 @@
 import os
-def extract_data(spark):
-    url = os.getenv("DB_URL")
+def extract_data(spark, config):
+    url = config['database']['url']
     properties ={
         "user":os.getenv("DB_USER"),
         "password":os.getenv("DB_PASSWORD"),
@@ -8,9 +8,9 @@ def extract_data(spark):
     }
 
     #Reading sales table
-    sales_df = spark.read.jdbc(url=url, table = "public.sales_transactions",properties = properties)
+    sales_df = spark.read.jdbc(url=url, table =config['tables']['source_sales'],properties = properties)
 
     #Reading Products Table
-    product_df = spark.read.jdbc(url=url, table = "public.product_master",properties = properties)
+    product_df = spark.read.jdbc(url=url, table = config['tables']['source_products'],properties = properties)
 
     return sales_df, product_df

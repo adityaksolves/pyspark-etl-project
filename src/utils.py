@@ -1,13 +1,17 @@
 
 import os
 import sys
-
+import yaml
 from dotenv import load_dotenv
 from pyspark.sql import SparkSession
 from datetime import datetime
 from pyspark.sql.types import *
 import logging
 load_dotenv()
+
+def load_config(env="dev"):
+    with open(f"configs/{env}_config.yaml","r") as f:
+        return yaml.safe_load(f)
 
 def get_logger():
     app_name = os.getenv("APP_NAME","ETL Pipeline")
@@ -24,22 +28,23 @@ def get_logger():
     return logger
 
 
-def get_spark_session():
-    app_name = os.getenv('APP_NAME')
-    jar_path = os.getenv('JAR_PATH')
+def get_spark_session(config):
+    builder = SparkSession.builder.appName(config['project']['name'])
+    for key, value in config.get('spark_params',{}).items():
+        builder = builder.config(key, value)
 
-    return SparkSession.builder\
-        .appName(app_name)\
-        .config("spark.jars", jar_path)\
-        .getOrCreate()
+    builder = builder.config("spark.jars", os.getenv('JAR_PATH'))
+    return builder.getOrCreate()
 
-def log_metadata(spark, status_code, status_text, error_message=None):
-    jdbc_url = os.getenv('DB_URL')
+def log_metadata(spark, config, status_code, status_text, error_message=None):
+    jdbc_url = config['database']['url']
+
+    target_table = config['tables']['metadata_table']
 
     properties = {
         "user": os.getenv('DB_USER'),
         "password": os.getenv('DB_PASSWORD'),
-        "driver": os.getenv('DB_DRIVER')
+        "driver": config['database']['driver']
     }
 
     schema = StructType([
@@ -52,7 +57,7 @@ def log_metadata(spark, status_code, status_text, error_message=None):
     log_data = [(datetime.now(), status_code, status_text, error_message)]
     log_df = spark.createDataFrame(log_data, schema=schema)
 
-    log_df.write.jdbc(url = jdbc_url, table="public.pipeline_run_metadata", mode = "append", properties=properties)
+    log_df.write.jdbc(url = jdbc_url, table=target_table, mode = "append", properties=properties)
 
 
 

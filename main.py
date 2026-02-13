@@ -29,12 +29,12 @@ def run_pipeline():
         logger.info("Data Loaded into DB")
 
         #Logging Metadata
-        log_metadata(spark,config, 0 , "SUCCESS")
+        log_metadata(spark,config, config['status_codes']['success_code'], config['status_codes']['success_msg'])
         logger.info("Pipeline Finished Successfully")
 
     except Exception as e:
         logger.error(f"Pipeline Failed : {str(e)}")
-        log_metadata(spark, config, 2 , "FAILED",str(e))
+        log_metadata(spark, config,config['status_codes']['failed_code'], "FAILED",str(e))
         sys.exit(1)
 
     finally:

@@ -9,7 +9,7 @@ spark_params:
   spark.sql.shuffle.partitions: "2"
 
 database:
-  url: "jdbc:postgresql://localhost:5432/dev_db"
+  url: "jdbc:postgresql://localhost:5432/postgres"
   driver: "org.postgresql.Driver"
 
 tables:
@@ -21,3 +21,9 @@ tables:
 transform:
   aggregation_column: "category"
   calculation: "quantity * price"
+
+
+status_codes:
+  success_code: 0
+  success_msg: "SUCCESS"
+  failed_code: 2

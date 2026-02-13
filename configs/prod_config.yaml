@@ -20,3 +20,8 @@ tables:
 
 load_settings:
   mode: "append"
+
+status_codes:
+  success_code: 0
+  success_msg: "SUCCESS"
+  failed_code: 2
